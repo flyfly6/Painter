@@ -40,7 +40,7 @@ git clone https://github.com/Kujiale-Mobile/Painter.git
 
 代码下载后，用小程序 IDE 打开后即可使用。
 
-**注：请选择小程序项目，非小游戏，例子中无 appid，所以无法在手机上运行，如果需要真机调试，请在打开例子时，填上自己的小程序 id**  
+**注：请选择小程序项目，非小游戏，例子中无 appid，所以无法在手机上运行，如果需要真机调试，请在打开例子时，填上自己的小程序 id**
 
 
 
@@ -76,7 +76,7 @@ mpvue 的使用方法请移步 [mpvue接入方案](https://github.com/Kujiale-Mo
    ```
    bind:imgOK="onImgOK"
    bind:imgErr="onImgErr"
-   
+
    onImgOK(e) {
      其中 e.detail.path 为生成的图片路径
    },
@@ -244,9 +244,9 @@ export default class ImageExample {
 {
   id: 'my-text-id',
   type: 'text',
-  
+
 2，然后在后面的 view 中，你可以在 left 和 right 属性中使用这个id。如下
-left: ['10rpx', 'my-text-id', 比例] 
+left: ['10rpx', 'my-text-id', 比例]
 表示布局在距离左边（10rpx + 该text文本宽度 * 比例） 的距离，比例默认为 1，可省去，你也可以使用负数或小数来做计算，最终的 left 会加上文本宽度乘以该数的值。
 
 注意：比例一定为一个 number
@@ -350,6 +350,20 @@ function _textDecoration(decoration, index, color) {
 | borderRadius | 边界圆角程度，如果是正方形布局，该属性为一半宽或高时，则为圆形 | 0                      |
 | borderWidth  | 边界宽度，外边界                                             | 必设值，否则无边框效果 |
 | borderColor  | 边框颜色                                                     | black                  |
+
+borderRadius 为 string 时设置四个相同的圆角，可传入 object 分别设置四个圆角，topLeft, topRight, bottomRight, bottomLeft 分别对应四个角是否为圆角，默认值都为 true。
+
+```js
+{
+  borderRadius: {
+    topLeft: false,
+    topRight: false,
+    bottomRight: false,
+    bottomLeft: false,
+    value: '20rpx',
+  }
+}
+```
 
 ![](https://user-images.githubusercontent.com/4279515/46778646-3cba1400-cd47-11e8-916a-3fddc172534d.png)
 

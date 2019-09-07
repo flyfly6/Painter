@@ -1,5 +1,6 @@
 const QR = require('./qrcode.js');
 const GD = require('./gradient.js');
+const { isObject } = require('./util');
 
 export default class Painter {
   constructor(ctx, data) {
@@ -78,19 +79,53 @@ export default class Painter {
    */
   _doClip(borderRadius, width, height) {
     if (borderRadius && width && height) {
-      const r = Math.min(borderRadius.toPx(), width / 2, height / 2);
+      let topLeft = true;
+      let topRight = true;
+      let bottomLeft = true;
+      let bottomRight = true;
+      let value = borderRadius;
+      if (isObject(borderRadius)) {
+        ({
+          topLeft = true,
+          topRight = true,
+          bottomLeft = true,
+          bottomRight = true,
+          value,
+        } = borderRadius);
+      }
+      const r = Math.min(value.toPx(), width / 2, height / 2);
       // 防止在某些机型上周边有黑框现象，此处如果直接设置 setFillStyle 为透明，在 Android 机型上会导致被裁减的图片也变为透明， iOS 和 IDE 上不会
       // setGlobalAlpha 在 1.9.90 起支持，低版本下无效，但把 setFillStyle 设为了 white，相对默认的 black 要好点
       this.ctx.setGlobalAlpha(0);
       this.ctx.setFillStyle('white');
       this.ctx.beginPath();
-      this.ctx.arc(-width / 2 + r, -height / 2 + r, r, 1 * Math.PI, 1.5 * Math.PI);
+      if (topLeft) {
+        this.ctx.arc(-width / 2 + r, -height / 2 + r, r, Number(Math.PI), 1.5 * Math.PI);
+      } else {
+        this.ctx.lineTo(-width / 2, -height / 2);
+        this.ctx.lineTo(-width / 2 + r, -height / 2);
+      }
       this.ctx.lineTo(width / 2 - r, -height / 2);
-      this.ctx.arc(width / 2 - r, -height / 2 + r, r, 1.5 * Math.PI, 2 * Math.PI);
+      if (topRight) {
+        this.ctx.arc(width / 2 - r, -height / 2 + r, r, 1.5 * Math.PI, 2 * Math.PI);
+      } else {
+        this.ctx.lineTo(width / 2, -height / 2);
+        this.ctx.lineTo(width / 2, -height / 2 + r);
+      }
       this.ctx.lineTo(width / 2, height / 2 - r);
-      this.ctx.arc(width / 2 - r, height / 2 - r, r, 0, 0.5 * Math.PI);
+      if (bottomRight) {
+        this.ctx.arc(width / 2 - r, height / 2 - r, r, 0, 0.5 * Math.PI);
+      } else {
+        this.ctx.lineTo(width / 2, height / 2);
+        this.ctx.lineTo(width / 2 - r, height / 2);
+      }
       this.ctx.lineTo(-width / 2 + r, height / 2);
-      this.ctx.arc(-width / 2 + r, height / 2 - r, r, 0.5 * Math.PI, 1 * Math.PI);
+      if (bottomLeft) {
+        this.ctx.arc(-width / 2 + r, height / 2 - r, r, 0.5 * Math.PI, Number(Math.PI));
+      } else {
+        this.ctx.lineTo(-width / 2, height / 2);
+        this.ctx.lineTo(-width / 2, height / 2 - r);
+      }
       this.ctx.closePath();
       this.ctx.fill();
       // 在 ios 的 6.6.6 版本上 clip 有 bug，禁掉此类型上的 clip，也就意味着，在此版本微信的 ios 设备下无法使用 border 属性
@@ -120,9 +155,23 @@ export default class Painter {
     }
     this.ctx.save();
     this._preProcess(view, true);
+    let topLeft = true;
+    let topRight = true;
+    let bottomLeft = true;
+    let bottomRight = true;
     let r;
     if (borderRadius) {
-      r = Math.min(borderRadius.toPx(), width / 2, height / 2);
+      let value = borderRadius;
+      if (isObject(borderRadius)) {
+        ({
+          topLeft = true,
+          topRight = true,
+          bottomLeft = true,
+          bottomRight = true,
+          value,
+        } = borderRadius);
+      }
+      r = Math.min(value.toPx(), width / 2, height / 2);
     } else {
       r = 0;
     }
@@ -130,13 +179,33 @@ export default class Painter {
     this.ctx.setLineWidth(lineWidth);
     this.ctx.setStrokeStyle(borderColor || 'black');
     this.ctx.beginPath();
-    this.ctx.arc(-width / 2 + r, -height / 2 + r, r + lineWidth / 2, 1 * Math.PI, 1.5 * Math.PI);
+    if (topLeft) {
+      this.ctx.arc(-width / 2 + r, -height / 2 + r, r + lineWidth / 2, Number(Math.PI), 1.5 * Math.PI);
+    } else {
+      this.ctx.lineTo(-width / 2 - lineWidth / 2, -height / 2 - lineWidth / 2);
+      this.ctx.lineTo(-width / 2 + r, -height / 2 - lineWidth / 2);
+    }
     this.ctx.lineTo(width / 2 - r, -height / 2 - lineWidth / 2);
-    this.ctx.arc(width / 2 - r, -height / 2 + r, r + lineWidth / 2, 1.5 * Math.PI, 2 * Math.PI);
+    if (topRight) {
+      this.ctx.arc(width / 2 - r, -height / 2 + r, r + lineWidth / 2, 1.5 * Math.PI, 2 * Math.PI);
+    } else {
+      this.ctx.lineTo(width / 2 + lineWidth / 2, -height / 2 - lineWidth / 2);
+      this.ctx.lineTo(width / 2 + lineWidth / 2, -height / 2 + r);
+    }
     this.ctx.lineTo(width / 2 + lineWidth / 2, height / 2 - r);
-    this.ctx.arc(width / 2 - r, height / 2 - r, r + lineWidth / 2, 0, 0.5 * Math.PI);
+    if (bottomRight) {
+      this.ctx.arc(width / 2 - r, height / 2 - r, r + lineWidth / 2, 0, 0.5 * Math.PI);
+    } else {
+      this.ctx.lineTo(width / 2 + lineWidth / 2, height / 2 + lineWidth / 2);
+      this.ctx.lineTo(width / 2 - r, height / 2 + lineWidth / 2);
+    }
     this.ctx.lineTo(-width / 2 + r, height / 2 + lineWidth / 2);
-    this.ctx.arc(-width / 2 + r, height / 2 - r, r + lineWidth / 2, 0.5 * Math.PI, 1 * Math.PI);
+    if (bottomLeft) {
+      this.ctx.arc(-width / 2 + r, height / 2 - r, r + lineWidth / 2, 0.5 * Math.PI, Number(Math.PI));
+    } else {
+      this.ctx.lineTo(-width / 2 - lineWidth / 2, height / 2 + lineWidth / 2);
+      this.ctx.lineTo(-width / 2 - lineWidth / 2, height / 2 - r);
+    }
     this.ctx.closePath();
     this.ctx.stroke();
     this.ctx.restore();

@@ -2,7 +2,7 @@ export default class LastMayday {
   palette() {
     return ({
       width: '654rpx',
-      height: '1000rpx',
+      height: '1280rpx',
       background: '#eee',
       views: [
         _textDecoration('overline', 0),
@@ -69,6 +69,10 @@ export default class LastMayday {
         _des(2, 'borderRadius: 30rpx'),
         _image(3, 0, '60rpx'),
         _des(3, '圆形'),
+        _radius(0, { value: '60rpx', topLeft: false }),
+        _radius(1, { value: '60rpx', topRight: false }),
+        _radius(2, { value: '60rpx', bottomRight: false }),
+        _radius(3, { value: '60rpx', bottomLeft: false }),
         {
           type: 'image',
           url: '/palette/avatar.jpg',
@@ -175,4 +179,20 @@ function _des(index, content) {
     des.css.left = `${startLeft + 120 * index + 30}rpx`;
   }
   return des;
+}
+
+function _radius(index, borderRadius) {
+  return (
+    {
+      type: 'image',
+      url: '/palette/avatar.jpg',
+      css: {
+        top: `${startTop + 12 * gapSize}rpx`,
+        left: `${startLeft + 160 * index}rpx`,
+        width: '120rpx',
+        height: '120rpx',
+        borderRadius: borderRadius,
+      },
+    }
+  );
 }

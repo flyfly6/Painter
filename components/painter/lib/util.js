@@ -61,8 +61,12 @@ function equal(a, b) {
   return a!==a && b!==b;
 }
 
+function isObject(obj) {
+  return Object.prototype.toString.call(obj).slice(8, -1) === 'Object';
+}
+
 module.exports = {
   isValidUrl,
-  equal
+  equal,
+  isObject
 };
-
